@@ -1,2 +1,2 @@
 # Java-Technical-articles
-It is just a java technical articles.
+此处仅仅记录一些自己的技术分享，欢迎给位指导。
