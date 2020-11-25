@@ -76,7 +76,8 @@ longAdderData.increment();
 
 CAS原理分析：
 本次着重由方案三中的AtomicInteger原子类如手，来分析CAS
-打开AtomicInteger的incrementAndGet()方法，该方法调用的Unsafr类中的compareAndSwapInt()方法，compareAndSwapInt()方法使用native方法修饰，表示在底层使用C/C++写的
+
+打开AtomicInteger的incrementAndGet()方法，该方法调用的Unsafr类中的compareAndSwapInt()方法，compareAndSwapInt()方法使用native方法修饰，表示在底层使用C++写的
 public final int getAndAddInt(Object var1, long var2, int var4) {
     int var5;
     do {
@@ -96,7 +97,7 @@ UNSAFE_END
 注释：cmpxchg(x, addr, e)的具体实现
 inline jint     Atomic::cmpxchg    (jint     exchange_value, volatile jint*     dest, jint     compare_value) {
   int mp = os::is_MP();
-  __asm__ volatile (LOCK_IF_MP(%4) "cmpxchgl %1,(%3)"
+  __asm__ volatile (LOCK_IF_MP(%4) "cmpxchgl %1,(%3)"   //asm汇编语言  cmpxchgl：compare and exchange 比较并交换   IF_MP：if multiprocessors 如果是多个CPU，前面加上了lock指令
                     : "=a" (exchange_value)
                     : "r" (exchange_value), "a" (compare_value), "r" (dest), "r" (mp)
                     : "cc", "memory");
@@ -114,3 +115,8 @@ static inline bool is_MP() {
     // in place until called after initialization has ocurred.
     return (_processor_count != 1) || AssumeMP;
  }
+ 
+ 注释：最终实现
+#define LOCK_IF_MP(mp) "cmp $0, " #mp "; je 1f; lock; 1: "
+//cmpxchg = cas修改变量值
+lock cmpxchg 指令（cmpxchg指令本身是非原子性，但是加了lock保证了cmpxchg原子性）
