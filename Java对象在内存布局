@@ -49,3 +49,4 @@ Instance size: 16 bytes
 Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
 问题：Object o = new Object()在内存中所占的字节？Object o = new User(int id, String name);
 答：1.开启压缩16个字节，没有开启压缩也是16个字节。 2.24个字节，8(markword) + 4（pointer） + 4(int) + 4(String 引用类型+4) + 4(padding) = 24个字节。
+![image](https://github.com/MusterHuang/Java-Technical-articles/blob/master/images/32bitJVMMarkWor.png)
